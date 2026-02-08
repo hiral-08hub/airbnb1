@@ -181,8 +181,14 @@ export default function PropertySlider() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/accounts/properties/');
-        setDbProperties(response.data);
+     const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/accounts/properties/`);
+      
+      // જો રિસ્પોન્સ ઓકે ના હોય તો એરર ફેંકો
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json(); // ડેટાને JSON માં કન્વર્ટ કરો
+      setDbProperties(data); // હવે ડેટા સેટ કરો
       } catch (error) {
         console.error("Fetching error:", error);
       }
@@ -238,7 +244,8 @@ export default function PropertySlider() {
     <Card key={property.id} onClick={() => handleCardClick(property)}>
       <ImageWrapper>
        
-                <PropertyImage src={`http://127.0.0.1:8000${property.img1}`} />
+              <PropertyImage src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${property.img1}`} />
+
               
         <Badge>Guest favourite</Badge>
        <HeartButton onClick={(e) => {
